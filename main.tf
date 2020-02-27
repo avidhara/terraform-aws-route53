@@ -1,9 +1,3 @@
-provider "aws" {
-  version                 = "> 2.14.0"
-  region                  = "us-west-2"
-  shared_credentials_file = "/Users/rajeev/.aws/credentials:"
-  profile                 = "default"
-}
 resource "aws_route53_zone" "this" {
   count             = var.create_zone ? 1 : 0
   name              = var.name
@@ -23,7 +17,7 @@ resource "aws_route53_zone" "this" {
 
 resource "aws_route53_record" "this" {
   for_each = var.route53_records
-  zone_id  = aws_route53_zone.this[0].zone_id
+  zone_id  = var.create_zone? aws_route53_zone.this[0].zone_id : var.zone_id
   name     = each.key
   type     = each.value["type"]
   ttl      = each.value["ttl"]
@@ -32,14 +26,13 @@ resource "aws_route53_record" "this" {
   set_identifier  = each.value["set_identifier"] == "" ? null : each.value["set_identifier"]
   health_check_id = each.value["health_check_id"] == "" ? null : each.value["health_check_id"]
   dynamic "alias" {
-    for_each = each.value["health_check_id"]
+    for_each = each.value["alias"]
     content {
-      name                   = each.value["health_check_id"]["name"]
-      zone_id                = each.value["health_check_id"]["zone_id"]
-      evaluate_target_health = each.value["health_check_id"]["evaluate_target_health"]
+      name                   = each.value["alias"]["name"]
+      zone_id                = each.value["alias"]["zone_id"]
+      evaluate_target_health = each.value["alias"]["evaluate_target_health"]
     }
   }
-  alias = each.value["alias"] == "" ? null : each.value["alias"]
   dynamic "failover_routing_policy" {
     for_each = each.value["failover_routing_policy"]
     content {
@@ -66,6 +59,6 @@ resource "aws_route53_record" "this" {
       weight = each.value["weighted_routing_policy"]["weight"]
     }
   }
-  multivalue_answer_routing_policy = each.value["multivalue_answer_routing_policy"] == "true" ? true : false
-  allow_overwrite                  = each.value["multivalue_answer_routing_policy"] == "true" ? true : false
+  multivalue_answer_routing_policy = length(each.value["weighted_routing_policy"]) > 0 ? null:each.value["multivalue_answer_routing_policy"]
+  allow_overwrite                  = each.value["allow_overwrite"]
 }

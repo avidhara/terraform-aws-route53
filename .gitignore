@@ -1,2 +1,4 @@
 provider.tf
-dev.tfvar
+dev.tfvars
+terraform.tfstate*
+.terraform/*

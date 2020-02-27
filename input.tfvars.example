@@ -1,0 +1,23 @@
+name          = "rajeev.com"
+comment       = "example zone"
+force_destroy = false
+vpc           = ["vpc-xxx"] #for Private hosted Zone
+
+route53_records = {
+  "www" = {
+    "type"           = "CNAME"
+    "ttl"            = 5
+    "set_identifier" = "dev"
+    "records"          = ["dev.example.com"]
+    "weighted_routing_policy" = {
+        "weight" = "10"
+    }
+    "allow_overwrite" = false
+    "multivalue_answer_routing_policy" = false
+    "latency_routing_policy" = {}
+    "geolocation_routing_policy" = {}
+    "failover_routing_policy" = {}
+    "alias" = {}
+    "health_check_id" = ""
+  }
+}

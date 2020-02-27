@@ -1,5 +1,5 @@
 variable "create_zone" {
-  type = bool
+  type        = bool
   description = "Do you want to create Hosted Zone"
   default     = true
 }
@@ -30,7 +30,7 @@ variable "force_destroy" {
 
 variable "tags" {
   type        = map
-  description = " A mapping of tags to assign to the zone."
+  description = "A mapping of tags to assign to the zone."
   default = {
 
   }
@@ -41,11 +41,18 @@ variable "vpc" {
   description = "Configuration block(s) specifying VPC(s) to associate with a private hosted zone. Conflicts with the delegation_set_id argument in this resource and any aws_route53_zone_association resource specifying the same zone ID"
   default     = []
 }
+################## Route 53 records ############
+
+variable "zone_id" {
+  type        = string
+  description = "Zone ID for adding route 53 records"
+  default     = null
+}
 
 variable "route53_records" {
-  type = map
+  type        = map
   description = "list of records with record types"
-  default     = {
-    
+  default = {
+
   }
 }
