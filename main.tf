@@ -20,9 +20,9 @@ resource "aws_route53_record" "this" {
   zone_id  = var.create_zone? aws_route53_zone.this[0].zone_id : var.zone_id
   name     = each.key
   type     = each.value["type"]
-  ttl      = each.value["ttl"]
+  ttl      = each.value["ttl"] != "" ? each.value["ttl"] : null
 
-  records         = each.value["records"]
+  records         = length(each.value["records"])> 0 ? each.value["records"] : null
   set_identifier  = each.value["set_identifier"] == "" ? null : each.value["set_identifier"]
   health_check_id = each.value["health_check_id"] == "" ? null : each.value["health_check_id"]
   dynamic "alias" {
@@ -60,5 +60,5 @@ resource "aws_route53_record" "this" {
     }
   }
   multivalue_answer_routing_policy = length(each.value["weighted_routing_policy"]) > 0 ? null:each.value["multivalue_answer_routing_policy"]
-  allow_overwrite                  = each.value["allow_overwrite"]
+  allow_overwrite                  = each.value["allow_overwrite"] ? each.value["allow_overwrite"]: false
 }
