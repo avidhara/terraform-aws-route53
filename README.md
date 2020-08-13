@@ -1,35 +1,4 @@
-# Terraform IAC for AWS Route 53
-
-## Prerequisites
-
-- Terraform 0.12.x
-- aws cli
-
-## Input variables
-
-| Name              | Description                                                                                                                                                                                                                | Type   |
-| ----------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ |
-| create_zone       | Do you want to create Hosted Zone                                                                                                                                                                                          | bool   |
-| name              | This is the name of the hosted zone                                                                                                                                                                                        | string |
-| comment           | A comment for the hosted zone. Defaults to 'Managed by Terraform'                                                                                                                                                          | string |
-| delegation_set_id | The ID of the reusable delegation set whose NS records you want to assign to the hosted zone. Conflicts with vpc as delegation sets can only be used for public zones.                                                     | string |
-| force_destroy     | Whether to destroy all records (possibly managed outside of Terraform) in the zone when destroying the zone.                                                                                                               | bool   |
-| tags              | A mapping of tags to assign to the zone.                                                                                                                                                                                   | map    |
-| vpc               | Configuration block(s) specifying VPC(s) to associate with a private hosted zone. Conflicts with the delegation_set_id argument in this resource and any aws_route53_zone_association resource specifying the same zone ID | list   |
-| zone_id           | Zone ID for adding route 53 records                                                                                                                                                                                        | string |
-| route53_records   | list of records with record types                                                                                                                                                                                          | map    |
-
-Link: https://www.terraform.io/docs/configuration/variables.html
-Please refer to example file
-
-### Use as Standalone TF template
-
-```bash
-cp input.tfvars.example input.tfvars
-terraform init
-terraform plan -var-file=./input.tfvars
-terraform apply -var-file=./input.tfvars
-```
+# Terraform module for AWS Route 53
 
 ### Using as Module
 
@@ -64,12 +33,41 @@ module "route53example" {
   }
 }
 
-
 ```
 
-### Output variables
+<!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
+## Requirements
 
-| Name         | Description                                                                                          |
-| ------------ | ---------------------------------------------------------------------------------------------------- |
-| zone_id      | The Hosted Zone ID. This can be referenced by zone records.                                          |
-| name_servers | A list of name servers in associated (or default) delegation set. Find more about delegation sets in |
+| Name | Version |
+|------|---------|
+| terraform | ~> 0.12.24 |
+| aws | ~> 2.60 |
+
+## Providers
+
+| Name | Version |
+|------|---------|
+| aws | ~> 2.60 |
+
+## Inputs
+
+| Name | Description | Type | Default | Required |
+|------|-------------|------|---------|:--------:|
+| comment | A comment for the hosted zone. Defaults to 'Managed by Terraform'. | `string` | `null` | no |
+| create\_zone | Do you want to create Hosted Zone | `bool` | `true` | no |
+| delegation\_set\_id | The ID of the reusable delegation set whose NS records you want to assign to the hosted zone. Conflicts with vpc as delegation sets can only be used for public zones. | `string` | `null` | no |
+| force\_destroy | Whether to destroy all records (possibly managed outside of Terraform) in the zone when destroying the zone. | `bool` | `false` | no |
+| name | This is the name of the hosted zone | `string` | `null` | no |
+| route53\_records | list of records with record types | `map` | `{}` | no |
+| tags | A mapping of tags to assign to the zone. | `map` | `{}` | no |
+| vpc | Configuration block(s) specifying VPC(s) to associate with a private hosted zone. Conflicts with the delegation\_set\_id argument in this resource and any aws\_route53\_zone\_association resource specifying the same zone ID | `list` | `[]` | no |
+| zone\_id | Zone ID for adding route 53 records | `string` | `null` | no |
+
+## Outputs
+
+| Name | Description |
+|------|-------------|
+| name\_servers | A list of name servers in associated (or default) delegation set. Find more about delegation sets in |
+| zone\_id | The Hosted Zone ID. This can be referenced by zone records. |
+
+<!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
